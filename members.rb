@@ -16,4 +16,12 @@ class Members
   def remove(member)
     @members.delete(member)
   end
+
+  def broadcast(message, sender)
+    receivers = @members - [sender]
+    receivers.each do |receiver|
+      receiver.socket.puts("> #{sender.username}: #{message}")
+    end
+  end
+  
 end

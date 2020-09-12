@@ -16,6 +16,7 @@ while true
     member = Member.new(username, socket)
     member.welcome_from(members)
     members.add(member)
-    socket.close
+    members.broadcast("[joined]", member)
+    # socket.close
   end
 end
