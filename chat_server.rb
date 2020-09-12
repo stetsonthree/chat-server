@@ -11,22 +11,11 @@ members = Members.new
 while true
   tcp_socket = server.accept
   Thread.new(tcp_socket) do |socket|
-    socket.print "Enter a username: "
-    username = socket.gets.chomp
-    member = Member.new(username, socket)
-    member.welcome_from(members)
-    members.add(member)
-    members.broadcast("[joined]", member)
-
+    member = members.register(socket)
     begin
-      loop do
-        message = socket.readline
-        members.broadcast(message, member)
-      end
+      members.start_listening_to(member)
     rescue EOFError
-      socket.close
-      members.remove(member)
-      members.broadcast("[left]", member)
+      members.disconnect(member)
     end
   end
 end
