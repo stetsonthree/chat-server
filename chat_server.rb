@@ -17,6 +17,16 @@ while true
     member.welcome_from(members)
     members.add(member)
     members.broadcast("[joined]", member)
-    # socket.close
+
+    begin
+      loop do
+        message = socket.readline
+        members.broadcast(message, member)
+      end
+    rescue EOFError
+      socket.close
+      members.remove(member)
+      members.broadcast("[left]", member)
+    end
   end
 end
