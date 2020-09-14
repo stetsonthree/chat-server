@@ -20,31 +20,39 @@ class Members
   def broadcast(message, sender)
     receivers = @members - [sender]
     receivers.each do |receiver|
-      receiver.socket.puts("> #{sender.username}: #{message}")
+      receiver.socket.print("#{sender.username}: #{message}")
+      receiver.newline_prompt
     end
   end
   
   def register(socket)
-    socket.print "Enter a username: "
-      username = socket.gets.chomp
-      member = Member.new(username, socket)
-      member.welcome_from(self)
-      add(member)
-      broadcast("[joined]", member)
-      member
+    username = get_member_info(socket)
+    member = Member.new(username, socket)
+    member.welcome_from(self)
+    add(member)
+    broadcast("[joined]", member)
+    member
   end
 
   def start_listening_to(member)
     loop do
-      message = member.socket.readline
+      message = member.listen
       broadcast(message, member)
+      member.prompt
     end
   end
   
   def disconnect(member)
-    member.socket.close
     broadcast("[left]", member)
+    member.disconnect
     remove(member)
+  end
+  
+  private
+
+  def get_member_info(socket)
+    socket.print "Enter a username: "
+    username = socket.gets.chomp
   end
   
 end

@@ -7,6 +7,24 @@ class Member
   end
 
   def welcome_from(members)
-    socket.puts "Welcome, #{username}! There are #{members.count} people here."
+    socket.print "Welcome, #{username}! There are #{members.count} people here."
+    newline_prompt
   end
+
+  def prompt
+    socket.print("> ")
+  end
+
+  def newline_prompt
+    socket.print("\n> ")
+  end
+  
+  def listen
+    socket.readline.chomp
+  end
+  
+  def disconnect
+    socket.close
+  end
+  
 end
